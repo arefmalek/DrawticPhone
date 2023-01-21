@@ -1,6 +1,8 @@
 const WIDTH = 1280;
 const HEIGHT = 720;
 
+const MAX_STROKE_WEIGHT = 10;
+
 const statusElement = document.querySelector("#status");
 
 const videoElement = document.getElementsByClassName("input_video")[0];
@@ -131,22 +133,50 @@ const gesture = (
     return "hover";
 }
 
+const mapRange = (value, min, max, newMin, newMax) => {
+    // map and clip
+    const valueClipped = Math.min(max, Math.max(min, value));
+    const out = ((valueClipped - min) / (max - min)) * (newMax - newMin) + newMin;
+
+    return out;
+}
+
+const strokeSize = (
+    thumBase, indexBase, thumbTip
+) => {
+    const baseVec = sub(indexBase, thumBase);
+    const tipVec = sub(thumbTip, thumBase);
+
+    const cosT = cosineTheta(baseVec, tipVec);
+    console.log(cosT);
+    const out = mapRange(cosT, 0.5, 1.0, 0.0, MAX_STROKE_WEIGHT);
+
+    return out;
+}
+
 var linesMap = new Map();
 var currentLine = [];
 var xQueue = new fixedQueue(5);
 var yQueue = new fixedQueue(5);
 
-function drawLine(ctx, points, thickness, color) {
+function drawLine(ctx, points, color) {
     if (points.length < 2) return;
 
-    ctx.beginPath();
-    ctx.lineWidth = thickness;
-    ctx.strokeStyle = color;
-    ctx.moveTo(points[0].x, points[0].y);
-    for (let i = 1; i < points.length; i++) {
-        ctx.lineTo(points[i].x, points[i].y);
+    // draw each segment as a seperate line with points[i].weight
+    for (let i = 0; i < points.length - 1; i++) {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.moveTo(points[i].x, points[i].y);
+        ctx.lineWidth = points[i].weight;
+        ctx.lineTo(points[i + 1].x, points[i + 1].y);
+        ctx.stroke();
     }
-    ctx.stroke();
+
+    // ctx.moveTo(points[0].x, points[0].y);
+    // for (let i = 1; i < points.length; i++) {
+    //     ctx.lineWidth = points[i].weight;
+    //     ctx.lineTo(points[i].x, points[i].y);
+    // }
 }
 
 function onResults(results) {
@@ -213,11 +243,13 @@ function onResults(results) {
             statusElement.innerText = form;
             // statusElement.innerText = dist;
 
+            const strokeWeight = strokeSize(thumbCmc, index, thumbTip);
+
             xQueue.push(indexTip.x * WIDTH);
             yQueue.push(indexTip.y * HEIGHT);
 
             if (form == "draw") {
-                currentLine.push({ x: xQueue.average(), y: yQueue.average() });
+                currentLine.push({ x: xQueue.average(), y: yQueue.average(), weight: strokeWeight });
             }
 
             if (form != "draw" && currentLine.length > 0) {
@@ -266,9 +298,9 @@ function onResults(results) {
 
     // loop through all the lines and draw them
     for (const theLine of linesMap.values()) {
-        drawLine(canvasCtx, theLine, 5, "#f07167");
+        drawLine(canvasCtx, theLine, "#f07167");
     }
-    drawLine(canvasCtx, currentLine, 5, "#f07167");
+    drawLine(canvasCtx, currentLine, "#f07167");
     canvasCtx.restore();
 }
 
