@@ -1,8 +1,67 @@
+const WIDTH = 1280;
+const HEIGHT = 720;
 
-console.log(document.getElementsByClassName("input_video")[0]);
+const statusElement = document.querySelector("#status");
+
 const videoElement = document.getElementsByClassName("input_video")[0];
 const canvasElement = document.getElementsByClassName("output_canvas")[0];
 const canvasCtx = canvasElement.getContext("2d");
+
+// pallette object for colors: one for hand, eraser, fill of circle
+const palette = {
+    red: "#f07167",
+    yellow: "#ffba49",
+    seaGreen: "#20a39e",
+    yellowGreen: "#9fd356",
+    hunterGreen: "#2e5339"
+};
+
+const alpha = "7f";
+// create another palette with alpha appended
+const paletteAlpha = {
+    red: palette.red + alpha,
+    yellow: palette.yellow + alpha,
+    seaGreen: palette.seaGreen + alpha,
+    yellowGreen: palette.yellowGreen + alpha,
+    hunterGreen: palette.hunterGreen + alpha,
+};
+
+class fixedQueue {
+    constructor(size) {
+        this.size = size;
+        this.queue = [];
+    }
+
+    push(item) {
+        if (this.queue.length >= this.size) {
+            this.queue.shift();
+        }
+        this.queue.push(item);
+    }
+
+    get() {
+        return this.queue;
+    }
+
+    average() {
+        let sum = 0;
+        for (let i = 0; i < this.queue.length; i++) {
+            sum += this.queue[i];
+        }
+        return sum / this.queue.length;
+    }
+
+    clear() {
+        this.queue = [];
+    }
+}
+
+const toScreen = (position) => {
+    return {
+        x: position.x * WIDTH,
+        y: position.y * HEIGHT,
+    };
+}
 
 // Dot product of vectors a and b
 const dot = (a, b) => a.x * b.x + a.y * b.y + a.z * b.z;
@@ -13,6 +72,12 @@ const distance = (a, b) => {
     let y = a.y - b.y;
     let z = a.z - b.z;
     return Math.sqrt(x * x + y * y + z * z);
+};
+
+const distance2d = (a, b) => {
+    let x = a.x - b.x;
+    let y = a.y - b.y;
+    return Math.sqrt(x * x + y * y);
 };
 
 // Add two vectors a and b
@@ -52,14 +117,37 @@ const gesture = (
     ringOpen,
     pinkyOpen
 ) => {
-    if (dist < distThreshold) {
-        return "pinch";
-    } else if (indexOpen && middleOpen && !ringOpen && !pinkyOpen) {
-        return "erase";
-    } else {
-        return "hover";
+    // if index open and rest closed, return draw
+    if (indexOpen && !middleOpen && !ringOpen && !pinkyOpen) {
+        return "draw";
     }
-};
+    // else if index and middle open and rest closed, return erase
+    else if (indexOpen && middleOpen && ringOpen && !pinkyOpen) {
+        return "erase";
+    }
+    else {
+        return "hover"
+    }
+    return "hover";
+}
+
+var linesMap = new Map();
+var currentLine = [];
+var xQueue = new fixedQueue(5);
+var yQueue = new fixedQueue(5);
+
+function drawLine(ctx, points, thickness, color) {
+    if (points.length < 2) return;
+
+    ctx.beginPath();
+    ctx.lineWidth = thickness;
+    ctx.strokeStyle = color;
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+        ctx.lineTo(points[i].x, points[i].y);
+    }
+    ctx.stroke();
+}
 
 function onResults(results) {
     canvasCtx.save();
@@ -69,13 +157,13 @@ function onResults(results) {
     if (results.multiHandLandmarks) {
         for (const landmarks of results.multiHandLandmarks) {
             drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
-                color: "#CADBC0",
+                color: palette.seaGreen,
                 lineWidth: 5,
             });
-            drawLandmarks(canvasCtx, landmarks, {
-                color: "#f07167",
-                lineWidth: 2,
-            });
+            // drawLandmarks(canvasCtx, landmarks, {
+            //     color: palette.bittersweet,
+            //     lineWidth: 2,
+            // });
 
             const wrist = landmarks[0];
 
@@ -104,51 +192,83 @@ function onResults(results) {
             const pinkyDip = landmarks[19];
             const pinkyTip = landmarks[20];
 
-            const dist = distance(thumbTip, indexTip);
-            const fingDot = cosineTheta(
-                sub(indexTip, indexPip),
-                sub(middleTip, middlePip)
-            );
+            const baseDist = distance(wrist, index);
 
-            const indexOpen = isOpen(
-                index,
-                indexPip,
-                indexDip,
-                indexTip,
-                wrist
-            );
-            const middleOpen = isOpen(
-                middle,
-                middlePip,
-                middleDip,
-                middleTip,
-                wrist
-            );
+            const dist = distance(thumbTip, indexTip) / baseDist;
+
+            const indexOpen = isOpen(index, indexPip, indexDip, indexTip, wrist);
+            const middleOpen = isOpen(middle, middlePip, middleDip, middleTip, wrist);
             const ringOpen = isOpen(ring, ringPip, ringDip, ringTip, wrist);
-            const pinkyOpen = isOpen(
-                pinky,
-                pinkyPip,
-                pinkyDip,
-                pinkyTip,
-                wrist
-            );
-
-            //                    console.log("Index finger: " + isOpen(index, indexPip, indexDip, indexTip, wrist));
-            //                    console.log("Middle finger: " + isOpen(middle, middlePip, middleDip, middleTip, wrist));
-            //                    console.log("Ring finger: " + isOpen(ring, ringPip, ringDip, ringTip, wrist));
-            //                    console.log("Pinky finger: " + isOpen(pinky, pinkyPip, pinkyDip, pinkyTip, wrist));
+            const pinkyOpen = isOpen(pinky, pinkyPip, pinkyDip, pinkyTip, wrist);
 
             const form = gesture(
                 dist,
-                0.15,
+                0.75,
                 indexOpen,
                 middleOpen,
                 ringOpen,
                 pinkyOpen
             );
-            console.log(form);
+
+            statusElement.innerText = form;
+            // statusElement.innerText = dist;
+
+            xQueue.push(indexTip.x * WIDTH);
+            yQueue.push(indexTip.y * HEIGHT);
+
+            if (form == "draw") {
+                currentLine.push({ x: xQueue.average(), y: yQueue.average() });
+            }
+
+            if (form != "draw" && currentLine.length > 0) {
+                linesMap.set(currentLine[0], currentLine);
+                currentLine = [];
+            }
+
+            const indexTipScreen = toScreen(indexTip);
+            const middleTipScreen = toScreen(middleTip);
+            const eraseRadius = distance2d(
+                indexTipScreen,
+                middleTipScreen
+            );
+
+            if (form == "erase") {
+                // draw a circle around the index finger
+                // draw a light yellow circle around the middle finger that's filled in 
+                // fill in the circle with a light yellow color
+
+                canvasCtx.beginPath();
+                canvasCtx.strokeStyle = palette.yellow;
+                canvasCtx.lineWidth = 2.5;
+                canvasCtx.arc(
+                    middleTipScreen.x,
+                    middleTipScreen.y,
+                    eraseRadius,
+                    0,
+                    2 * Math.PI
+                );
+                canvasCtx.fillStyle = paletteAlpha.yellow;
+                canvasCtx.fill();
+                canvasCtx.stroke();
+
+                for (const [key, values] of linesMap.entries()) {
+                    for (const value of values) {
+                        const eraseDist = distance2d(value, middleTipScreen);
+                        if (eraseDist < eraseRadius) {
+                            linesMap.delete(key);
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
+
+    // loop through all the lines and draw them
+    for (const theLine of linesMap.values()) {
+        drawLine(canvasCtx, theLine, 5, "#f07167");
+    }
+    drawLine(canvasCtx, currentLine, 5, "#f07167");
     canvasCtx.restore();
 }
 
@@ -170,7 +290,7 @@ const camera = new Camera(videoElement, {
     onFrame: async () => {
         await hands.send({ image: videoElement });
     },
-    width: 1280,
-    height: 720,
+    width: WIDTH,
+    height: HEIGHT,
 });
 camera.start();
