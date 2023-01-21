@@ -8,10 +8,12 @@ const Game = () => {
 
         <div
             style={{
-                border: '5px solid white',
+                border: '4px solid white',
                 height: '200px',
                 width: '300px',
-                margin: 'auto'
+                margin: 'auto',
+                borderRadius: '10px',
+                padding: '5px'
             }}
         >
             <Outlet/>

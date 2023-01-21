@@ -4,4 +4,7 @@
   height: 100vh;
   margin: -8px;
   opacity: 0.9;
+  font-family: "Comic Sans MS", "Comic Sans", cursive;
+  color: white;
+  font-weight: 600;
 }
