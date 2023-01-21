@@ -8,6 +8,13 @@ const statusElement = document.querySelector("#status");
 const videoElement = document.getElementsByClassName("input_video")[0];
 const canvasElement = document.getElementsByClassName("output_canvas")[0];
 const canvasCtx = canvasElement.getContext("2d");
+const downloadButton = document.querySelector("#download");
+var download = false;
+downloadButton.onclick = () => {
+    console.log("bruh");
+    download = true;
+    console.log(download);
+}
 
 // pallette object for colors: one for hand, eraser, fill of circle
 const palette = {
@@ -102,7 +109,6 @@ function isOpen(base, pip, dip, tip, wrist) {
     const cosineTheta =
         (dot(wristToBase, pipToTip) / magnitude(pipToTip)) *
         magnitude(wristToBase);
-    // console.log(cosineTheta);
 
     if (cosineTheta > 0.0) {
         return true;
@@ -148,7 +154,6 @@ const strokeSize = (
     const tipVec = sub(thumbTip, thumBase);
 
     const cosT = cosineTheta(baseVec, tipVec);
-    console.log(cosT);
     const out = mapRange(cosT, 0.5, 1.0, 0.0, MAX_STROKE_WEIGHT);
 
     return out;
@@ -156,8 +161,8 @@ const strokeSize = (
 
 var linesMap = new Map();
 var currentLine = [];
-var xQueue = new fixedQueue(5);
-var yQueue = new fixedQueue(5);
+var xQueue = new fixedQueue(2);
+var yQueue = new fixedQueue(2);
 
 function drawLine(ctx, points, color) {
     if (points.length < 2) return;
@@ -179,11 +184,29 @@ function drawLine(ctx, points, color) {
     // }
 }
 
+
 function onResults(results) {
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    // canvasCtx.drawImage(
-    //     results.image, 0, 0, canvasElement.width, canvasElement.height);
+    canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+    // loop through all the lines and draw them
+    for (const theLine of linesMap.values()) {
+        drawLine(canvasCtx, theLine, "#f07167");
+    }
+    drawLine(canvasCtx, currentLine, "#f07167");
+    canvasCtx.restore();
+
+    if (download) {
+        const hiddenDl = document.querySelector("#hidden-dl");
+        const dataUrl = canvasElement.toDataURL();
+        hiddenDl.href = dataUrl;
+        console.log(dataUrl);
+        hiddenDl.click();
+
+        download = false;
+    }
+
     if (results.multiHandLandmarks) {
         for (const landmarks of results.multiHandLandmarks) {
             drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
@@ -296,12 +319,6 @@ function onResults(results) {
         }
     }
 
-    // loop through all the lines and draw them
-    for (const theLine of linesMap.values()) {
-        drawLine(canvasCtx, theLine, "#f07167");
-    }
-    drawLine(canvasCtx, currentLine, "#f07167");
-    canvasCtx.restore();
 }
 
 const hands = new Hands({
