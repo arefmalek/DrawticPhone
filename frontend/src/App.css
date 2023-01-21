@@ -7,4 +7,20 @@
   font-family: "Comic Sans MS", "Comic Sans", cursive;
   color: white;
   font-weight: 600;
+  /* padding: 20px */
+}
+
+::placeholder {
+  color: white;
+  opacity: 0.5;
+}
+
+button:hover {
+  border-color: black !important;
+  color: black !important;
+}
+
+input:hover {
+  border-color: black !important;
+  color: black !important;
 }
