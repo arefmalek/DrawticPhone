@@ -158,8 +158,6 @@ export default function CameraCanvas(props) {
   const xQueueRef = useRef(new fixedQueue(2));
   const yQueueRef = useRef(new fixedQueue(2));
 
-
-
   useEffect(() => {
     function drawLine(ctx, points, color) {
       if (points.length < 2) return;
@@ -173,12 +171,6 @@ export default function CameraCanvas(props) {
         ctx.lineTo(points[i + 1].x, points[i + 1].y);
         ctx.stroke();
       }
-
-      // ctx.moveTo(points[0].x, points[0].y);
-      // for (let i = 1; i < points.length; i++) {
-      //     ctx.lineWidth = points[i].weight;
-      //     ctx.lineTo(points[i].x, points[i].y);
-      // }
     }
 
     function onResults(results) {

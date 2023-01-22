@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import CameraCanvas from '../camera/CameraCanvas';
 import { LobbyContext } from '../LobbyContext';
@@ -13,8 +13,9 @@ const Drawing = () => {
 
     const [lobbyData, setLobbyData] = useContext(LobbyContext);
     const [userName, setUser] = useContext(UserContext);
-
+    const [submitted, setSubmitted] = useState(false);
     const navigate = useNavigate();
+    const [mount, setMount] = useState(true);
 
     const dlRef = useRef(
         {
@@ -25,7 +26,7 @@ const Drawing = () => {
 
     useEffect(() => {
         if (!lobbyData) {
-            navigate('/');
+            // navigate('/');
         }
         else {
             const { status: screen } = lobbyData;
@@ -35,35 +36,113 @@ const Drawing = () => {
         }
     }, [lobbyData]);
 
+    useEffect(() => {
+        if (!mount) {
+            setMount(true)
+        }
+    }, [mount])
+
+    const getPrompt = () => {
+        try {
+            const userArr = Object.entries(lobbyData.users);
+            console.log({userArr})
+            const index = userArr.findIndex(x => x[0] == userName);
+            console.log({index, userName})
+            const n = userArr.length;
+            const prev = userArr[(index + n - 1) % n][1]; // prompt
+            return prev.prompt;
+        } catch (err) {
+            console.log(err)
+            return 'bad'
+        } 
+    }
+
     return (
         <div>
-            <CameraCanvas
-                downloadRef={dlRef}
-                theCallback={() => {
-                    submitDrawing(lobbyData?.id, userName, dlRef.current.image);
-                }}
-            />
+            <div>
+                <span>
+                    Draw The Prompt: {getPrompt()}
+                </span>
+                <div
+                    style={{
+                        width: '100%',
+                        background: 'white',
+                        height: '4px',
+                        borderRadius: '2px',
+                        marginTop: 5
+                    }}
+                />
+            </div>
+
+            <div style={{
+                margin: '5px 0'
+            }}>
+                <div 
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        height: '180px'
+                    }}
+                >
+                    {submitted ? 
+                        <>
+                            {dlRef.current.image &&
+                                <img
+                                    src={dlRef.current.image}
+                                    alt="Image not submitted"
+                                />
+                            }
+                        </>
+                    :
+                        <>
+                            {
+                                mount && 
+                                <CameraCanvas
+                                    downloadRef={dlRef}
+                                    theCallback={() => {
+                                        setSubmitted(true)
+                                        submitDrawing(lobbyData?.id, userName, dlRef.current.image);
+                                    }}
+                                />
+                            }
+                        </>
+                        
+                    }
+                </div>
+            </div>
 
             <div>
-                <div>
+                <div
+                    style={{
+                        display: 'flex'
+                    }}
+                >
+                    <button
+                        style={{
+                            ...buttonStyle,
+                            width: '100%',
+                            marginRight: 5
+                        }}
+                        onClick={() => {
+                            dlRef.current.download = true;
+                        }}
+                    >
+                        Submit
+                    </button>
                     <button
                         style={{
                             ...buttonStyle,
                             width: '100%'
                         }}
                         onClick={() => {
-                            dlRef.current.download = true;
-                            // loop till DL true
-                            // while (dlRef.current.download) { }
+                            setMount(false);
                         }}
                     >
-                        Submit
+                        Refresh
                     </button>
                 </div>
             </div>
-            <div>
-                {dlRef.current.image && <img src={dlRef.current.image} alt="Image not submitted" />}
-            </div>
+            
         </div >
 
     )
