@@ -210,10 +210,7 @@ export default function CameraCanvas(props) {
 
       if (results.multiHandLandmarks) {
         for (const landmarks of results.multiHandLandmarks) {
-          drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
-            color: palette.seaGreen,
-            lineWidth: 5,
-          });
+
           // drawLandmarks(canvasCtx, landmarks, {
           //     color: palette.bittersweet,
           //     lineWidth: 2,
@@ -288,6 +285,14 @@ export default function CameraCanvas(props) {
             currentLineRef.current = [];
           }
 
+          var handColor = palette.seaGreen;
+          if (form === "draw") {
+            handColor = palette.red;
+          }
+          drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
+            color: handColor,
+            lineWidth: 5,
+          });
           const indexTipScreen = toScreen(indexTip);
           const middleTipScreen = toScreen(middleTip);
           const eraseRadius = distance2d(indexTipScreen, middleTipScreen);
