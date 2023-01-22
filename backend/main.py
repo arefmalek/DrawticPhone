@@ -15,15 +15,17 @@ SESSION_TYPE = 'redis'
 Session(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-if __name__== '__main__':
+if __name__ == '__main__':
     socketio.run(app)
 
 # lobby functions
+
 
 @socketio.on('enter_lobby')
 def view_lobby(lobbyId: int):
     join_room(lobbyId)
     emit("lobby", session[lobbyId].json(), to=lobbyId)
+
 
 @socketio.on('create_lobby')
 def create_lobby():
@@ -34,12 +36,14 @@ def create_lobby():
     print(session[lobby.id].json())
     emit("lobby", session[lobby.id].json(), to=lobby.id)
 
+
 @socketio.on('join_lobby')
 def join_lobby(lobbyId: int, user: str):
     session[lobbyId].add_user(user)
     join_room(lobbyId)
     print('join room')
     emit("lobby", session[lobbyId].json(), to=lobbyId)
+
 
 @socketio.on('leave_lobby')
 def leave_lobby(lobbyId: int, user: str):
@@ -48,14 +52,32 @@ def leave_lobby(lobbyId: int, user: str):
     emit("lobby", session[lobbyId].json(), to=lobbyId)
 
 # game functions
+
+
 @socketio.on('start_game')
 def start_game(lobbyId: int):
     session[lobbyId].start_game()
     emit("lobby", session[lobbyId].json(), to=lobbyId)
+
 
 @socketio.on('submit_prompt')
 def submit_prompt(lobbyId: int, user: str, prompt: str):
     session[lobbyId].submit_prompt(user, prompt)
     if (session[lobbyId].check_complete()):
         session[lobbyId].draw_phase()
+    emit("lobby", session[lobbyId].json(), to=lobbyId)
+
+
+@socketio.on('submit_drawing')
+def submit_drawing(lobbyId: int, user: str, image_url: str):
+    session[lobbyId].submit_drawing(user, image_url)
+    if (session[lobbyId].check_complete()):
+        session[lobbyId].guess_phase()
+    emit("lobby", session[lobbyId].json(), to=lobbyId)
+
+@socketio.on('submit_guess')
+def submit_guess(lobbyId: int, user: str, guess: str):
+    session[lobbyId].submit_guess(user, guess)
+    if (session[lobbyId].check_complete()):
+        session[lobbyId].result_phase()
     emit("lobby", session[lobbyId].json(), to=lobbyId)
