@@ -23,8 +23,6 @@ const Drawing = () => {
         }
     );
 
-    console.log(lobbyData, userName);
-
     // useEffect(() => {
     //     // const lobbyData = lobbyData?.lastJsonMessage;
 

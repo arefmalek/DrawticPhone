@@ -5,8 +5,8 @@ import { Hands, HAND_CONNECTIONS } from "@mediapipe/hands";
 
 import { useEffect, useRef } from "react";
 
-const WIDTH = 1280;
-const HEIGHT = 720;
+const WIDTH = 640;
+const HEIGHT = 360;
 
 const MAX_STROKE_WEIGHT = 10;
 
@@ -207,8 +207,8 @@ export default function CameraCanvas(props) {
       canvasCtx.restore();
 
       if (props.downloadRef && props.downloadRef.current.download) {
-        // const dataUrl = canvasElement.toDataURL();
-        const dataUrl = "your moms house";
+        const dataUrl = canvasElement.toDataURL();
+        // const dataUrl = "your moms house";
         props.downloadRef.current.image = dataUrl;
         // console.log(dataUrl);
         props.theCallback();
@@ -351,8 +351,8 @@ export default function CameraCanvas(props) {
       onFrame: async () => {
         await hands.send({ image: videoRef.current });
       },
-      width: WIDTH,
-      height: HEIGHT,
+      width: 1280,
+      height: 720,
     });
     camera.start();
   }, []);
@@ -363,8 +363,8 @@ export default function CameraCanvas(props) {
       <canvas
         ref={canvasRef}
         className="output_canvas"
-        width="1280px"
-        height="720px"
+        width="640px"
+        height="360px"
       ></canvas>
     </div>
   );

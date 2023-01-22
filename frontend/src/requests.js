@@ -48,7 +48,7 @@ export const start_game = (lobbyId) => {
 
 export const submitDrawing = (lobbyId, userName, imageURL) => {
     try {
-        console.log(lobbyId, userName, imageURL)
+        console.log("submit_drawing", imageURL);
         socket.emit("submit_drawing", lobbyId, userName, imageURL);
     } catch (err) {
         console.log(err);
