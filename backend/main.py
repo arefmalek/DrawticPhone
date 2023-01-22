@@ -18,14 +18,11 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 if __name__== '__main__':
     socketio.run(app)
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
 # lobby functions
 
 @socketio.on('view_lobby')
 def view_lobby(lobbyId: int):
+    join_room(lobbyId)
     emit("lobby", session['lobbies'][lobbyId])
 
 @socketio.on('create_lobby')
@@ -38,16 +35,27 @@ def create_lobby():
     emit("lobby", session[lobby.id].json(), to=lobby.id)
 
 @socketio.on('join_lobby')
-def join_lobby(lobbyId: Lobby, user: User):
+def join_lobby(lobbyId: int, user: str):
     session[lobbyId].add_user(user)
     join_room(lobbyId)
     print('join room')
     emit("lobby", session[lobbyId].json(), to=lobbyId)
 
 @socketio.on('leave_lobby')
-def leave_lobby(lobbyId: Lobby, user: User):
-    session['lobbies'][lobbyId].remove_user(user)
+def leave_lobby(lobbyId: int, user: str):
+    session[lobbyId].remove_user(user)
     leave_room(lobbyId)
-    emit("lobby", session['lobbies'][lobbyId], to=lobbyId)
+    emit("lobby", session[lobbyId].json(), to=lobbyId)
 
 # game functions
+@socketio.on('start_game')
+def start_game(lobbyId: int):
+    session[lobbyId].start_game()
+    emit("lobby", session[lobbyId].json(), to=lobbyId)
+
+@socketio.on('submit_prompt')
+def submit_prompt(lobbyId: int, user: str, prompt: str):
+    session[lobbyId].submit_prompt(user, prompt)
+    if (session[lobbyId].check_complete()):
+        session[lobbyId].draw_phase()
+    emit("lobby", session[lobbyId].json(), to=lobbyId)

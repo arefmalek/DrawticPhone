@@ -10,8 +10,37 @@ class Lobby(object):
     def add_user(self, user: str):
         self.users[user] = User(user)
     
-    def remove_user(self, user: User):
-        self.users.pop(user.name)
+    def remove_user(self, user: str):
+        self.users[user] = User(user)
+    
+    def start_game(self):
+        self.completed = 0
+        self.status = 'prompt'
+    
+    def draw_phase(self):
+        self.completed = 0
+        self.status = 'draw'
+    
+    def guess_phase(self):
+        self.compelted = 0
+        self.status = 'guess'
+    
+    # def results page
+    
+    def submit_prompt(self, user: str, prompt: str):
+        self.users[user].set_prompt(prompt)
+        self.completed += 1
+    
+    def submit_drawing(self, user: str, image_url: str):
+        self.users[user].set_image_url(image_url)
+        self.completed += 1
+
+    def submit_guess(self, user: str, guess: str):
+        self.users[user].set_guess(guess)
+        self.completed += 1
+    
+    def check_complete(self):
+        return self.completed == len(self.users)
 
     def json(self):
         sol = dict()
