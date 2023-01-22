@@ -158,6 +158,8 @@ export default function CameraCanvas(props) {
   const xQueueRef = useRef(new fixedQueue(2));
   const yQueueRef = useRef(new fixedQueue(2));
 
+
+
   useEffect(() => {
     function drawLine(ctx, points, color) {
       if (points.length < 2) return;
@@ -205,9 +207,11 @@ export default function CameraCanvas(props) {
       canvasCtx.restore();
 
       if (props.downloadRef && props.downloadRef.current.download) {
-        const dataUrl = canvasElement.toDataURL();
+        // const dataUrl = canvasElement.toDataURL();
+        const dataUrl = "your moms house";
         props.downloadRef.current.image = dataUrl;
-        console.log(dataUrl);
+        // console.log(dataUrl);
+        props.theCallback();
 
         props.downloadRef.current.download = false;
       }

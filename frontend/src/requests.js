@@ -11,9 +11,9 @@ export const createLobby = () => {
 }
 
 export const enterLobby = (lobbyId) => {
-    console.log({lobbyId})
+    console.log({ lobbyId })
     const id = parseInt(lobbyId)
-    console.log({id})
+    console.log({ id })
     try {
         socket.emit("enter_lobby", id);
     } catch (err) {
@@ -40,6 +40,16 @@ export const submitPrompt = (lobbyId, userName, prompt) => {
 export const start_game = (lobbyId) => {
     try {
         socket.emit("start_game", lobbyId);
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+
+export const submitDrawing = (lobbyId, userName, imageURL) => {
+    try {
+        console.log(lobbyId, userName, imageURL)
+        socket.emit("submit_drawing", lobbyId, userName, imageURL);
     } catch (err) {
         console.log(err);
     }
