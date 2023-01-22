@@ -7,8 +7,8 @@ class Lobby(object):
         self.completed = 0
         self.status = status
     
-    def add_user(self, user: User):
-        self.users[user.name] = user
+    def add_user(self, user: str):
+        self.users[user] = User(user)
     
     def remove_user(self, user: User):
         self.users.pop(user.name)
@@ -18,7 +18,7 @@ class Lobby(object):
         sol['id'] = self.id
         users_ = dict()
         for attr, value in self.users.items():
-            users_['attr'] = value.json()
+            users_[attr] = value.json()
         sol['users'] = users_
         sol['completed'] = self.completed
         sol['status'] = self.status

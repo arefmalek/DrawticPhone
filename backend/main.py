@@ -39,9 +39,10 @@ def create_lobby():
 
 @socketio.on('join_lobby')
 def join_lobby(lobbyId: Lobby, user: User):
-    session['lobbies'][lobbyId].addUser(user)
+    session[lobbyId].add_user(user)
     join_room(lobbyId)
-    emit("lobby", jsonify(session['lobbies'][lobbyId]), to=lobbyId)
+    print('join room')
+    emit("lobby", session[lobbyId].json(), to=lobbyId)
 
 @socketio.on('leave_lobby')
 def leave_lobby(lobbyId: Lobby, user: User):

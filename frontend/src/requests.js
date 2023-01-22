@@ -12,7 +12,7 @@ export const createLobby = () => {
 
 export const enterLobby = (lobbyId) => {
     try {
-        socket.emit("enterLobby", lobbyId);
+        socket.emit("enter_lobby", lobbyId);
     } catch (err) {
         console.log(err)
     }
@@ -20,7 +20,7 @@ export const enterLobby = (lobbyId) => {
 
 export const joinLobby = (lobbyId, userName) => {
     try {
-        socket.emit("joinLobby", lobbyId, userName);
+        socket.emit("join_lobby", lobbyId, userName);
     } catch (err) {
         console.log(err);
     }
@@ -28,7 +28,7 @@ export const joinLobby = (lobbyId, userName) => {
 
 export const submitPrompt = (lobbyId, userName, prompt) => {
     try {
-        socket.emit("submitPrompt", lobbyId, userName, prompt);
+        socket.emit("submit_prompt", lobbyId, userName, prompt);
     } catch (err) {
         console.log(err);
     }
