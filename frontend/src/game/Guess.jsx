@@ -20,7 +20,6 @@ const Guess = () => {
         else {
             const { status: screen } = lobbyData;
             if (screen && screen !== 'guess') {
-                console.log("going to:", screen)
                 navigate("/game/" + screen)
             }
         }
@@ -65,56 +64,62 @@ const Guess = () => {
                 />
             </div>
 
-            <div>
+            <div style={{display: 'flex', justifyContent:'center'}}>
                 <img
                     src={prev.imageURL}
                     alt={'no img :('}
+                    style={{
+                        maxWidth: '100%',
+                        height: 150,
+                        margin: '5px 0'
+                    }}
                 />
             </div>
 
-            <div>
-                <div>
-                    <input
-                        style={{
-                            ...buttonStyle,
-                            width: 'calc(100% - 18px)',
-                            cursor: 'text',
-                            marginBottom: 5
-                        }}
-                        onChange={(e) => setGuess(e.target.value)}
-                        placeholder="Your Guess"
-                    />
-                </div>
+            <div
+                style={{
+                    display: 'flex'
+                }}
+            >
+                <input
+                    style={{
+                        ...buttonStyle,
+                        width: 'calc(100% - 18px)',
+                        cursor: 'text',
+                        marginRight: 5
+                    }}
+                    onChange={(e) => setGuess(e.target.value)}
+                    placeholder="Your Guess"
+                />
+                <button
+                    style={{
+                        ...buttonStyle,
+                        width: '100%'
+                    }}
+                    disabled={submitted}
+                    onClick={() => {
+                        setSubmitted(true)
+                        submitGuess(guess, lobbyData.id, user)
+                    }}
+                >
+                    Submit
+                </button>
+            </div>
 
-                <div>
-                    <button
-                        style={{
-                            ...buttonStyle,
-                            width: '100%'
-                        }}
-                        disabled={submitted}
-                        onClick={() => {
+            <div>
+                {submitted ?
+                    <p>
+                        Waiting for other players...
+                    </p>
+                :
+                    <Timer
+                        time={30}
+                        callback={() => {
                             setSubmitted(true)
                             submitGuess(guess, lobbyData.id, user)
                         }}
-                    >
-                        Submit
-                    </button>
-                </div>
-
-                <div>
-                    {submitted ?
-                        <p>Waiting for other players...</p>
-                    :
-                        <Timer
-                            time={30}
-                            callback={() => {
-                                setSubmitted(true)
-                                submitGuess(guess, lobbyData.id, user)
-                            }}
-                        />
-                    }
-                </div>
+                    />
+                }
             </div>
 
         </div>

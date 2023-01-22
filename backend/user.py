@@ -17,6 +17,6 @@ class User(object):
     def json(self):
         sol = dict()
         sol['prompt'] = self.prompt
-        sol['image_url'] = self.image_url
+        sol['imageURL'] = self.image_url
         sol['guess'] = self.guess
         return sol

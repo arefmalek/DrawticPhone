@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import CameraCanvas from '../camera/CameraCanvas';
 import { LobbyContext } from '../LobbyContext';
@@ -23,27 +23,22 @@ const Drawing = () => {
         }
     );
 
-    // useEffect(() => {
-    //     // const lobbyData = lobbyData?.lastJsonMessage;
-
-    //     // get lobby id and uname now
-
-
-    //     if (!lobbyData) {
-    //         // navigate('/');
-    //     }
-    //     else {
-    //         const { screen } = lobbyData;
-    //         if (screen && screen !== 'results') {
-    //             navigate(screen)
-    //         }
-    //     }
-    // }, [lobbyData]);
+    useEffect(() => {
+        if (!lobbyData) {
+            navigate('/');
+        }
+        else {
+            const { status: screen } = lobbyData;
+            if (screen && screen !== 'draw') {
+                navigate('/game/' + screen)
+            }
+        }
+    }, [lobbyData]);
 
     return (
         <div>
-            <CameraCanvas downloadRef={dlRef}
-
+            <CameraCanvas
+                downloadRef={dlRef}
                 theCallback={() => {
                     submitDrawing(lobbyData?.id, userName, dlRef.current.image);
                 }}
@@ -66,7 +61,9 @@ const Drawing = () => {
                     </button>
                 </div>
             </div>
-
+            <div>
+                {dlRef.current.image && <img src={dlRef.current.image} alt="Image not submitted" />}
+            </div>
         </div >
 
     )
