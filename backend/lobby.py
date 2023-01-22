@@ -16,7 +16,7 @@ class Lobby(object):
 
     def start_game(self):
         self.completed = 0
-        self.status = 'prompt'
+        self.status = 'prompts'
 
     def draw_phase(self):
         self.completed = 0
@@ -45,7 +45,7 @@ class Lobby(object):
         self.completed += 1
 
     def check_complete(self):
-        return self.completed == len(self.users)
+        return self.completed == len(self.users.keys())
 
     def json(self):
         sol = dict()

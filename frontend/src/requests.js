@@ -36,3 +36,11 @@ export const submitPrompt = (lobbyId, userName, prompt) => {
         console.log(err);
     }
 }
+
+export const start_game = (lobbyId) => {
+    try {
+        socket.emit("start_game", lobbyId);
+    } catch (err) {
+        console.log(err);
+    }
+}

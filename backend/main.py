@@ -9,6 +9,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 # Check Configuration section for more details
 CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 SESSION_TYPE = 'redis'
 Session(app)
 socketio = SocketIO(app, cors_allowed_origins="*")

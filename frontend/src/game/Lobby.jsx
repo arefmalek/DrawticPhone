@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { LobbyContext } from '../LobbyContext';
-import { joinLobby } from '../requests';
+import { joinLobby, start_game } from '../requests';
 import { UserContext } from '../UserContext';
 import { buttonStyle, getUserEmoji } from '../util';
 
@@ -22,9 +22,10 @@ const Lobby = () => {
         if (!lobbyData) {
             // navigate('/');
         } else {
-            const { screen } = lobbyData;
-            if (screen && screen !== 'results') {
-                navigate("/game/" + screen)
+            const { status: screen } = lobbyData;
+            if (screen && screen !== 'waiting') {
+                console.log(screen)
+                navigate('/game/' + screen)
             }
         }
     }, [lobbyData]);
@@ -115,7 +116,7 @@ const Lobby = () => {
                         width: 100
                     }}
                     onClick={() => {
-                        startGame();
+                        start_game(lobbyData.id);
                     }}
                 >
                     Start Game

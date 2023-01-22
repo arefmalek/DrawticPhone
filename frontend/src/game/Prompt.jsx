@@ -8,24 +8,32 @@ import { UserContext } from '../UserContext';
 import { buttonStyle } from '../util';
 
 const Prompt = () => {
-    
+
     const [lobbyData, setLobbyData] = useContext(LobbyContext);
     const [user, setUser] = useContext(UserContext);
-    
+
     const navigate = useNavigate();
 
     const [prompt, setPrompt] = useState('');
+    const [submitted, setSubmit] = useState(false);
 
     useEffect(() => {
         if (!lobbyData) {
-            // navigate('/');
+            navigate('/');
         } else {
-            const { screen } = lobbyData;
+            const { status: screen } = lobbyData;
             if (screen && screen !== 'prompts') {
-                navigate(screen)
+                console.log(screen)
+                navigate('/game/' + screen)
             }
         }
     }, [lobbyData]);
+
+    const submit = () => {
+        console.log('submitted prompt')
+        submitPrompt(lobbyData.id, user, prompt);
+        setSubmit(true);
+    };
 
     return (
         <div
@@ -72,20 +80,26 @@ const Prompt = () => {
                         placeholder="Your Prompt"
                     />
                 </div>
-                
+
                 <div>
                     <button
                         style={{
                             ...buttonStyle,
                             width: '100%'
                         }}
-                        onClick={() => submitPrompt(lobbyData.id, user, prompt)}
+                        disabled={submitted}
+                        onClick={() => submit()}
                     >
                         Submit
                     </button>
                 </div>
+
+                <div>
+                    {submitted ? <p>Waiting for other players...</p> :
+                        <Timer time={30} callback={() => submit()}></Timer>}
+                </div>
             </div>
-            
+
         </div>
     )
 }
