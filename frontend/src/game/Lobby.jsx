@@ -43,7 +43,7 @@ const Lobby = () => {
         } else {
             const { screen } = lobbyData;
             if (screen && screen !== 'results') {
-                navigate(screen)
+                navigate('/' + screen)
             }
         }
     }, [lobbyData]);
@@ -62,7 +62,9 @@ const Lobby = () => {
                     <span>
                         Waiting on other players...
                     </span>
-
+                    <span>
+                        {lobbyData?.id}
+                    </span>
                 </div>
                 <div
                     style={{
@@ -104,7 +106,7 @@ const Lobby = () => {
                 <input
                     style={{
                         ...buttonStyle,
-                        width: 200,
+                        width: 'calc(100% - 200px)',
                         cursor: 'text',
                         marginRight: 5
                     }}
@@ -114,14 +116,28 @@ const Lobby = () => {
                 <button
                     style={{
                         ...buttonStyle,
-                        width: 120
+                        width: 100
                     }}
                     onClick={() => {
-                        joinLobby(lobbyData.id, name)
-                        setUser(name);
+                        if (!user) {
+                            joinLobby(lobbyData.id, name)
+                            setUser(name);
+                        }
                     }}
                 >
                     Join Lobby
+                </button>
+
+                <button
+                    style={{
+                        ...buttonStyle,
+                        width: 100
+                    }}
+                    onClick={() => {
+                        startGame();
+                    }}
+                >
+                    Start Game
                 </button>
             </div>
             

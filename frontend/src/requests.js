@@ -11,8 +11,11 @@ export const createLobby = () => {
 }
 
 export const enterLobby = (lobbyId) => {
+    console.log({lobbyId})
+    const id = parseInt(lobbyId)
+    console.log({id})
     try {
-        socket.emit("enter_lobby", lobbyId);
+        socket.emit("enter_lobby", id);
     } catch (err) {
         console.log(err)
     }
