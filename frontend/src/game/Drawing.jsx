@@ -75,28 +75,25 @@ const Drawing = () => {
             </div>
 
             <div style={{
-                margin: '5px 0'
+                margin: '5px 0',
+                display: 'flex',
+                justifyContent: 'center',
             }}>
-                <div 
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        height: '180px'
-                    }}
-                >
                     {submitted ? 
                         <>
                             {dlRef.current.image &&
                                 <img
                                     src={dlRef.current.image}
                                     alt="Image not submitted"
+                                    style={{
+                                        height: '180px'
+                                    }}
                                 />
                             }
                         </>
                     :
                         <>
-                            {
-                                mount && 
+                            {mount && 
                                 <CameraCanvas
                                     downloadRef={dlRef}
                                     theCallback={() => {
@@ -108,7 +105,6 @@ const Drawing = () => {
                         </>
                         
                     }
-                </div>
             </div>
 
             <div>
