@@ -8,18 +8,18 @@ const Results = () => {
     const [lobbyData, setLobbyData] = useContext(LobbyContext);
     const navigate = useNavigate();
     const [index, setIndex] = useState(0);
-    
-    const [data, setData] = useState({prev: {}, next: {}, curr: {}, userArr: []});
+
+    const [data, setData] = useState({ prev: {}, next: {}, curr: {}, userArr: [] });
 
     const setTheData = () => {
         try {
-            console.log({lobbyData})
+            console.log({ lobbyData })
             const userArr = Object.entries(lobbyData.users);
             console.log('here: ', userArr);
             const n = userArr.length;
             const prev = userArr[(index + 1) % n];
             const curr = userArr[index % n];
-            const next = userArr[(index + n - 1) % n];
+            const next = userArr[(index + n + 2) % n];
             setData({
                 prev: { ...prev[1], name: prev[0] },
                 curr: { ...curr[1], name: curr[0] },
@@ -48,7 +48,7 @@ const Results = () => {
             }
         }
     }, [lobbyData]);
-    
+
     const { prev, curr, next, userArr } = data;
     console.log(data)
 
@@ -76,8 +76,8 @@ const Results = () => {
             </div>
 
             <div>
-                <div style={{marginTop: '20px'}}>
-                    {prev?.name}'s Prompt: {prev?.prompt}
+                <div style={{ marginTop: '20px' }}>
+                    {curr?.name}'s Prompt: {curr?.prompt}
                 </div>
                 <div
                     style={{
@@ -87,14 +87,14 @@ const Results = () => {
                 >
 
 
-                    {curr?.name}'s Image:
+                    {prev?.name}'s Image:
                     <div><img
                         src={prev?.imageURL}
                         style={{
                             height: 120
                         }}
                     /></div>
-                    
+
                 </div>
                 <div>
                     {next?.name}'s Guess: {next?.guess}
