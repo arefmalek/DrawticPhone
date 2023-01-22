@@ -23,7 +23,7 @@ class Lobby(object):
         self.status = 'draw'
 
     def guess_phase(self):
-        self.compelted = 0
+        self.completed = 0
         self.status = 'guess'
     
     def result_phase(self):
@@ -41,8 +41,9 @@ class Lobby(object):
         self.completed += 1
 
     def submit_guess(self, user: str, guess: str):
+        if self.users[user].guess == "":
+            self.completed += 1
         self.users[user].set_guess(guess)
-        self.completed += 1
 
     def check_complete(self):
         return self.completed == len(self.users.keys())
