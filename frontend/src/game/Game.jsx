@@ -1,10 +1,14 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useContext } from 'react';
-import { Outlet } from 'react-router-dom';
-import useWebSocket from 'react-use-websocket';
-import { LobbyContext } from '../LobbyContext';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 const Game = () => {
+    // const navigate = useNavigate();
+
+    // useEffect(() => {
+    //     navigate('/game/results');
+    // }, [])
+
     return (
         <div
             style={{

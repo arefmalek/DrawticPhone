@@ -9,15 +9,13 @@ const Drawing = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const lobbyData = lobbyData?.lastJsonMessage;
-
         if (!lobbyData) {
-            // navigate('/');
+            navigate('/');
         }
         else {
             const { screen } = lobbyData;
             if (screen && screen !== 'results') {
-                navigate(screen)
+                navigate('/game/' + screen)
             }
         }
     }, [lobbyData]);

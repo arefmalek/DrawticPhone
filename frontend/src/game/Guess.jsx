@@ -8,10 +8,8 @@ const Guess = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const lobbyData = lobbyData?.lastJsonMessage;
-
         if (!lobbyData) {
-            // navigate('/');
+            navigate('/');
         }
         else {
             const { screen } = lobbyData;

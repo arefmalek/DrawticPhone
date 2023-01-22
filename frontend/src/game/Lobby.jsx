@@ -3,29 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { LobbyContext } from '../LobbyContext';
 import { joinLobby } from '../requests';
 import { UserContext } from '../UserContext';
-import { buttonStyle } from '../util';
+import { buttonStyle, getUserEmoji } from '../util';
 
 const userCard = {
     margin: '10px 0 0 20px'
-}
-
-// from: https://gist.github.com/jlevy/c246006675becc446360a798e2b2d781
-const simpleHash = str => {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash &= hash; // Convert to 32bit integer
-    }
-    return Math.ceil(hash / 3);
-};
-
-const getUserEmoji = (name) => {
-    const min = 129408;
-    const max = 129431;
-    const rand = simpleHash(name);
-    const val = rand % (max - min + 1) + min;
-    return "&#" + val + ";";
 }
 
 const Lobby = () => {
@@ -43,7 +24,7 @@ const Lobby = () => {
         } else {
             const { screen } = lobbyData;
             if (screen && screen !== 'results') {
-                navigate('/' + screen)
+                navigate("/game/" + screen)
             }
         }
     }, [lobbyData]);
@@ -59,13 +40,16 @@ const Lobby = () => {
         >
             <div>
                 <div
-                    style={{display: 'flex'}}
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'space-between'
+                    }}
                 >
                     <span>
                         Waiting on other players...
                     </span>
                     <span>
-                        {lobbyData?.id}
+                        Lobby ID: {lobbyData?.id}
                     </span>
                 </div>
                 <div
@@ -86,11 +70,7 @@ const Lobby = () => {
                             <span
                                 style={userCard}
                             >
-                                <span
-                                    dangerouslySetInnerHTML={{
-                                        __html: getUserEmoji(userName)
-                                    }}
-                                />
+                                {getUserEmoji(userName)}
                                 {' '}
                                 {userName}
                             </span>
@@ -108,9 +88,8 @@ const Lobby = () => {
                 <input
                     style={{
                         ...buttonStyle,
-                        width: 'calc(100% - 200px)',
-                        cursor: 'text',
-                        marginRight: 5
+                        width: 'calc(100% - 230px)',
+                        cursor: 'text'
                     }}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Name"
