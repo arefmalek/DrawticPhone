@@ -11,9 +11,9 @@ export const createLobby = () => {
 }
 
 export const enterLobby = (lobbyId) => {
-    console.log({lobbyId})
+    console.log({ lobbyId })
     const id = parseInt(lobbyId)
-    console.log({id})
+    console.log({ id })
     try {
         socket.emit("enter_lobby", id);
     } catch (err) {
