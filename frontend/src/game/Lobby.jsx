@@ -20,7 +20,7 @@ const Lobby = () => {
 
     useEffect(() => {
         if (!lobbyData) {
-            // navigate('/');
+            navigate('/');
         } else {
             const { status: screen } = lobbyData;
             if (screen && screen !== 'waiting') {
@@ -101,7 +101,7 @@ const Lobby = () => {
                         width: 100
                     }}
                     onClick={() => {
-                        if (!user) {
+                        if (!user && name.length > 0) {
                             joinLobby(lobbyData.id, name)
                             setUser(name);
                         }

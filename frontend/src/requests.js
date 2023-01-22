@@ -44,3 +44,14 @@ export const start_game = (lobbyId) => {
         console.log(err);
     }
 }
+
+export const submitGuess = (guess, lobbyId, userName) => {
+    console.log({
+        guess, lobbyId, userName
+    })
+    try {
+        socket.emit('submit_guess', guess, lobbyId, userName)
+    } catch (err) {
+        console.log(err);
+    }
+}

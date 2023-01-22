@@ -75,7 +75,7 @@ def submit_drawing(lobbyId: int, user: str, image_url: str):
 
 
 @socketio.on('submit_guess')
-def submit_guess(lobbyId: int, user: str, guess: str):
+def submit_guess(guess: str, lobbyId: int, user: str):
     lobbies[lobbyId].submit_guess(user, guess)
     if (lobbies[lobbyId].check_complete()):
         lobbies[lobbyId].result_phase()
