@@ -3,7 +3,8 @@ import { socket } from "./ws";
 
 export const createLobby = () => {
     try {
-        socket.emit("createLobby");
+        console.log("creating_lobby")
+        socket.emit("create_lobby");
     } catch (err) {
         console.log(err);
     }

@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 
-const WS_URL = 'ws://localhost:4000';
+const WS_URL = 'http://localhost:5000';
 
 export let socket = io(WS_URL);
 

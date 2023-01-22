@@ -15,6 +15,7 @@ const Game = () => {
             setLobbyData(null);
         })
         socket.on('lobby', (data) => {
+            console.log({data})
             setLobbyData(data);
         })
 

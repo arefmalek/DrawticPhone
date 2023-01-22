@@ -1,6 +1,6 @@
-from flask import Flask, session, render_template 
+from flask import Flask, session, render_template, jsonify
 from flask_session import Session
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, send
 import redis
 from lobby import Lobby
 from user import User
@@ -13,7 +13,7 @@ app = Flask(__name__)
 CORS(app)
 SESSION_TYPE = 'redis'
 Session(app)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 if __name__== '__main__':
     socketio.run(app)
@@ -33,13 +33,15 @@ def create_lobby():
     id = randrange(10000, 99999)
     lobby = Lobby(id, {})
     session[lobby.id] = lobby
-    emit("lobby", session[lobby.id], to=lobby.id)
+    join_room(lobby.id)
+    print(session[lobby.id].json())
+    emit("lobby", session[lobby.id].json(), to=lobby.id)
 
 @socketio.on('join_lobby')
 def join_lobby(lobbyId: Lobby, user: User):
     session['lobbies'][lobbyId].addUser(user)
     join_room(lobbyId)
-    emit("lobby", session['lobbies'][lobbyId], to=lobbyId)
+    emit("lobby", jsonify(session['lobbies'][lobbyId]), to=lobbyId)
 
 @socketio.on('leave_lobby')
 def leave_lobby(lobbyId: Lobby, user: User):
