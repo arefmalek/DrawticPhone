@@ -11,7 +11,7 @@ import { useState } from 'react'
 import { UserContext } from './UserContext'
 import { socket, WS_URL, setSocket } from './ws';
 import { useEffect } from 'react';
-import io from 'socket.io-client';
+import Guess from './game/Guess'
 
 function App() {
   const [lobbyData, setLobbyData] = useState();
@@ -68,6 +68,10 @@ function App() {
               <Route
                 path='prompts'
                 element={<Prompt />}
+              />
+              <Route
+                path='guess'
+                element={<Guess />}
               />
               <Route
                 path='results'

@@ -58,7 +58,9 @@ const Lobby = () => {
             }}
         >
             <div>
-                <div>
+                <div
+                    style={{display: 'flex'}}
+                >
                     <span>
                         Waiting on other players...
                     </span>

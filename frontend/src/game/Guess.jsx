@@ -1,10 +1,9 @@
-import React, { useContext } from 'react'
-import { useNavigate } from 'react-router-dom';
-import CameraCanvas from '../camera/CameraCanvas';
+import React, { useContext, useEffect } from 'react'
+import { useNavigate } from 'react-router';
 import { LobbyContext } from '../LobbyContext';
 
-const Drawing = () => {
-
+const Guess = () => {
+    
     const [lobbyData, setLobbyData] = useContext(LobbyContext);
     const navigate = useNavigate();
 
@@ -24,9 +23,9 @@ const Drawing = () => {
 
     return (
         <div>
-            <CameraCanvas/>
+            Results
         </div>
     )
 }
 
-export default Drawing
+export default Guess
