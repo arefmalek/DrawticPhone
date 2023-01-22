@@ -149,7 +149,7 @@ const strokeSize = (thumBase, indexBase, thumbTip) => {
   return out;
 };
 
-export default function CameraCanvas() {
+export default function CameraCanvas(props) {
   const videoRef = useRef();
   const canvasRef = useRef();
 
@@ -204,15 +204,13 @@ export default function CameraCanvas() {
       drawLine(canvasCtx, currentLine, "#f07167");
       canvasCtx.restore();
 
-      // if (download) {
-      //     const hiddenDl = document.querySelector("#hidden-dl");
-      //     const dataUrl = canvasElement.toDataURL();
-      //     hiddenDl.href = dataUrl;
-      //     console.log(dataUrl);
-      //     hiddenDl.click();
+      if (props.downloadRef && props.downloadRef.current.download) {
+        const dataUrl = canvasElement.toDataURL();
+        props.downloadRef.current.image = dataUrl;
+        console.log(dataUrl);
 
-      //     download = false;
-      // }
+        props.downloadRef.current.download = false;
+      }
 
       if (results.multiHandLandmarks) {
         for (const landmarks of results.multiHandLandmarks) {
