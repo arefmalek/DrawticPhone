@@ -70,11 +70,7 @@ def submit_prompt(lobbyId: int, user: str, prompt: str):
 
 @socketio.on('submit_drawing')
 def submit_drawing(lobbyId: int, user: str, image_url: str):
-    # update user drawing
-    print("yeeter")
-    print(lobbyId, user, image_url[:20])
     lobbies[lobbyId].submit_drawing(user, image_url)
-    # if everyone has guessed, go to the guessing round
     if (lobbies[lobbyId].check_complete()):
         lobbies[lobbyId].guess_phase()
     emit("lobby", lobbies[lobbyId].json(), to=lobbyId)
