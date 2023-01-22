@@ -55,3 +55,12 @@ export const submitGuess = (guess, lobbyId, userName) => {
         console.log(err);
     }
 }
+
+export const submitDrawing = (lobbyId, userName, imageURL) => {
+    try {
+        console.log(lobbyId, userName, imageURL)
+        socket.emit("submit_drawing", lobbyId, userName, imageURL);
+    } catch (err) {
+        console.log(err);
+    }
+}
