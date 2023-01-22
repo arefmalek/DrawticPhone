@@ -17,9 +17,9 @@ const Results = () => {
             const userArr = Object.entries(lobbyData.users);
             console.log('here: ', userArr);
             const n = userArr.length;
-            const prev = userArr[(index + n - 1) % n];
+            const prev = userArr[(index + 1) % n];
             const curr = userArr[index % n];
-            const next = userArr[(index + 1) % n];
+            const next = userArr[(index + n - 1) % n];
             setData({
                 prev: { ...prev[1], name: prev[0] },
                 curr: { ...curr[1], name: curr[0] },
@@ -33,7 +33,7 @@ const Results = () => {
 
     useEffect(() => {
         setTheData();
-    }, [data])
+    }, [index])
 
     useEffect(() => {
         setTheData();
