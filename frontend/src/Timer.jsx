@@ -10,7 +10,7 @@ const Timer = ({
     
     useEffect(() => {
         console.log(t)
-        if (t == 0) {
+        if (t === 0) {
             callback();
         }
     }, [t]);
