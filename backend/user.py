@@ -4,13 +4,13 @@ class User(object):
         self.prompt = ""
         self.image_url = ""
         self.guess = ""
-    
+
     def set_prompt(self, prompt: str):
-        self.prompt = prompt;
+        self.prompt = prompt
 
     def set_image_url(self, image_url: str):
-        self.image_url = image_url    
-    
+        self.image_url = image_url
+
     def set_guess(self, guess: str):
         self.guess = guess
 
