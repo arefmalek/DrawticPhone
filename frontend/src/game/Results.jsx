@@ -57,7 +57,7 @@ const Results = () => {
             <div
                 style={{
                     display: 'flex',
-                    justifyContent: 'space-between',
+                    justifyContent: 'space-around',
                     marginButton: 20
                 }}
             >
@@ -76,17 +76,25 @@ const Results = () => {
             </div>
 
             <div>
-                <div>
+                <div style={{marginTop: '20px'}}>
                     {prev?.name}'s Prompt: {prev?.prompt}
                 </div>
-                <div>
+                <div
+                    style={{
+                        alignItems: 'center',
+                        margin: '5px 0'
+                    }}
+                >
+
+
                     {curr?.name}'s Image:
-                    <img
+                    <div><img
                         src={prev?.imageURL}
                         style={{
-                            height: 150
+                            height: 120
                         }}
-                    />
+                    /></div>
+                    
                 </div>
                 <div>
                     {next?.name}'s Guess: {next?.guess}
