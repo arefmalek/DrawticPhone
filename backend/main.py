@@ -1,9 +1,7 @@
-from flask import Flask, session, render_template, jsonify
+from flask import Flask
 from flask_session import Session
-from flask_socketio import SocketIO, emit, send
-import redis
+from flask_socketio import SocketIO, emit
 from lobby import Lobby
-from user import User
 from random import randrange
 from flask_socketio import join_room, leave_room
 from flask_cors import CORS
