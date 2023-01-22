@@ -1,0 +1,26 @@
+#root {
+  background-image: linear-gradient(to bottom right, rgb(112, 112, 216), rgb(48, 147, 48));
+  width: 100vw;
+  height: 100vh;
+  margin: -8px;
+  opacity: 0.9;
+  font-family: "Comic Sans MS", "Comic Sans", cursive;
+  color: white;
+  font-weight: 600;
+  /* padding: 20px */
+}
+
+::placeholder {
+  color: white;
+  opacity: 0.5;
+}
+
+button:hover {
+  border-color: black !important;
+  color: black !important;
+}
+
+input:hover {
+  border-color: black !important;
+  color: black !important;
+}
