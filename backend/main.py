@@ -20,7 +20,7 @@ if __name__== '__main__':
 
 # lobby functions
 
-@socketio.on('view_lobby')
+@socketio.on('enter_lobby')
 def view_lobby(lobbyId: int):
     join_room(lobbyId)
     emit("lobby", session['lobbies'][lobbyId])
