@@ -40,7 +40,7 @@ const Home = () => {
                 <div
                     style={title}
                 >
-                    GARTIC PHONY
+                    DRAWTIC PHONE
                 </div>
 
                 <button
