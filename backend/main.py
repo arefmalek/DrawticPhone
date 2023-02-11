@@ -73,7 +73,7 @@ def submit_drawing(lobbyId: int, user: str, image_url: str):
     lobbies[lobbyId].submit_drawing(user, image_url)
     if (lobbies[lobbyId].check_complete()):
         lobbies[lobbyId].guess_phase()
-    emit("lobby", lobbies[lobbyId].json(), to=lobbyId)
+        emit("lobby", lobbies[lobbyId].json(), to=lobbyId)
 
 
 @socketio.on('submit_guess')

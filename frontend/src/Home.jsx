@@ -1,16 +1,15 @@
-import React, { useState } from 'react'
-import { useEffect } from 'react'
-import { useContext } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
-import { LobbyContext } from './LobbyContext'
-import { createLobby, enterLobby, joinLobby } from './requests'
+import React, { useState, useEffect, useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+import './Home.css'
+
+import { LobbyContext } from './context/LobbyContext'
+
+import { createLobby, enterLobby } from './requests'
 import { buttonStyle } from './util'
 
-const title = {
-    margin: 'auto',
-    marginBottom: 20,
-    fontSize: 30
-}
+const t = ["D", "r", "a", "w", "t", "i", "c", " ", "P", "h", "o", "n", "e"]
+
 
 const Home = () => {
 
@@ -38,9 +37,17 @@ const Home = () => {
                 }}
             >
                 <div
-                    style={title}
+                    className="title"
                 >
-                    DRAWTIC PHONE
+                    {/* DRAWTIC PHONE */}
+                    {t.map((ch, i) => (
+                        <div
+                            className="chars"
+                            key={i}
+                        >
+                            {ch}
+                        </div>
+                    ))}
                 </div>
 
                 <button

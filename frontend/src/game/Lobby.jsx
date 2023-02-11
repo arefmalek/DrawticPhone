@@ -1,13 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { LobbyContext } from '../LobbyContext';
-import { joinLobby, start_game } from '../requests';
-import { UserContext } from '../UserContext';
+
 import { buttonStyle, getUserEmoji } from '../util';
+
+import { joinLobby, start_game } from '../requests';
+
+import { LobbyContext } from '../context/LobbyContext';
+import { UserContext } from '../context/UserContext';
 
 const userCard = {
     margin: '10px 0 0 20px'
 }
+
 
 const Lobby = () => {
 

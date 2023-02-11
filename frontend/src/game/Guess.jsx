@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router';
-import { LobbyContext } from '../LobbyContext';
+import { LobbyContext } from '../context/LobbyContext';
 import { submitGuess } from '../requests';
-import Timer from '../Timer';
-import { UserContext } from '../UserContext';
+import Timer from '../game/Timer';
+import { UserContext } from '../context/UserContext';
 import { buttonStyle } from '../util';
 
 const Guess = () => {

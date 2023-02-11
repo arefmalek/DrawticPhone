@@ -1,10 +1,10 @@
 import React, { useContext, useState } from 'react'
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LobbyContext } from '../LobbyContext';
+import { LobbyContext } from '../context/LobbyContext';
 import { submitPrompt } from '../requests';
-import Timer from '../Timer';
-import { UserContext } from '../UserContext';
+import Timer from '../game/Timer';
+import { UserContext } from '../context/UserContext';
 import { buttonStyle } from '../util';
 
 const Prompt = () => {

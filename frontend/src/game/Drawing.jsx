@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import CameraCanvas from '../camera/CameraCanvas';
-import { LobbyContext } from '../LobbyContext';
+import { LobbyContext } from '../context/LobbyContext';
 import { useRef } from 'react';
 import { buttonStyle } from '../util';
 import { submitDrawing } from '../requests';
 
 // get users
-import { UserContext } from '../UserContext';
+import { UserContext } from '../context/UserContext';
 
 const Drawing = () => {
 

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { LobbyContext } from '../LobbyContext';
+
+import { LobbyContext } from '../context/LobbyContext';
 import { buttonStyle, getUserEmoji } from '../util';
 
 const Results = () => {

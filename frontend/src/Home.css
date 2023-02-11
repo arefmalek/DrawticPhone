@@ -1,0 +1,13 @@
+.title {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    align-items: center;
+    font-size: 30px;
+}
+
+.chars:hover {
+    transform: scale(2.0);
+    transition-duration: 0.2s;
+    cursor: pointer;
+}
