@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_session import Session
 from flask_socketio import SocketIO, emit
 from lobby import Lobby
 from random import randrange
@@ -7,25 +6,20 @@ from flask_socketio import join_room, leave_room
 from flask_cors import CORS
 
 app = Flask(__name__)
-# Check Configuration section for more details
-CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
-SESSION_TYPE = 'redis'
-Session(app)
+cors = CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
-
-# welcome to our redis :)
 lobbies = dict()
 
 if __name__ == '__main__':
     socketio.run(app)
 
-# lobby functions
 
+# lobby functions
 @socketio.on('enter_lobby')
 def enter_lobby(lobbyId: int):
     join_room(lobbyId)
     emit("lobby", lobbies[lobbyId].json(), to=lobbyId)
+
 
 @socketio.on('create_lobby')
 def create_lobby():
@@ -51,9 +45,8 @@ def leave_lobby(lobbyId: int, user: str):
     leave_room(lobbyId)
     emit("lobby", lobbies[lobbyId].json(), to=lobbyId)
 
+
 # game functions
-
-
 @socketio.on('start_game')
 def start_game(lobbyId: int):
     lobbies[lobbyId].start_game()
