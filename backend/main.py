@@ -4,11 +4,15 @@ from lobby import Lobby
 from random import randrange
 from flask_socketio import join_room, leave_room
 from flask_cors import CORS
+import redis
+import json
 
 app = Flask(__name__)
 cors = CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
-lobbies = dict()
+# lobbies = dict()
+r = redis.Redis(host='localhost', port=6379, db=0)
+
 
 if __name__ == '__main__':
     socketio.run(app)
@@ -18,25 +22,29 @@ if __name__ == '__main__':
 @socketio.on('enter_lobby')
 def enter_lobby(lobbyId: int):
     join_room(lobbyId)
-    emit("lobby", lobbies[lobbyId].json(), to=lobbyId)
+    # emit("lobby", lobbies[lobbyId].json(), to=lobbyId)
+    emit("lobby", r.get(lobbyId), to=lobbyId)
 
 
 @socketio.on('create_lobby')
 def create_lobby():
     id = randrange(10000, 99999)
     lobby = Lobby(id, {})
-    lobbies[lobby.id] = lobby
+    lobby_json = json.dumps(lobby)
+    r.set(lobby.id, lobby_json)
     join_room(lobby.id)
-    print(lobbies[lobby.id].json())
-    emit("lobby", lobbies[lobby.id].json(), to=lobby.id)
+    emit("lobby", lobby_json, to=lobby.id)
 
 
 @socketio.on('join_lobby')
 def join_lobby(lobbyId: int, user: str):
-    lobbies[lobbyId].add_user(user)
+    lobby: Lobby = json.loads(r.get(lobbyId))
+    print('join lobby:', lobby)
     join_room(lobbyId)
-    print('join room')
-    emit("lobby", lobbies[lobbyId].json(), to=lobbyId)
+    lobby.add_user(user)
+    lobby_json = json.dumps(lobby)
+    r.set(lobby.id, lobby_json)
+    emit("lobby", lobby_json, to=lobbyId)
 
 
 @socketio.on('leave_lobby')
