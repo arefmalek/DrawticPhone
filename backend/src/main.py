@@ -4,6 +4,7 @@ from flask_cors import CORS
 import redis
 from models.lobby import Lobby
 import json
+from db import generateLobbyId, storeLobby, loadLobby
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -14,19 +15,16 @@ r = redis.Redis(host='localhost', port=6379, db=0)
 # lobby functions:
 @socketio.on('createLobby')
 def createLobby():
-    lobbyId = r.incr('nextLobbyId') - 1
-    lobby = Lobby(lobbyId)
-    r.hmset('lobby:{}'.format(lobbyId), lobby.mapping())
+    lobby = Lobby(generateLobbyId(r))
+    storeLobby(r, lobby)
     emit('lobby', json.dumps(lobby.mapping()))
-    join_room(lobbyId)
+    join_room(lobby.id)
 
 
 @socketio.on('enterLobby')
 def enterLobby(lobbyId: str):
-    lobby = r.hgetall('lobby:{}'.format(lobbyId))
-    lobby = {k.decode('utf-8'): v.decode('utf-8') for k, v in lobby.items()}
-    send(json.dumps(lobby))
-    # may need a 'leave lobby' function, requires more tesing
+    lobby: Lobby = loadLobby(r, int(lobbyId))
+    send(json.dumps(lobby.mapping()))
     join_room(lobbyId)
 
 

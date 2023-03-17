@@ -1,9 +1,9 @@
 from flask_socketio import SocketIOTestClient
 import redis
 import json
-from models.lobby import Lobby
 import unittest
-from main import app, socketio
+from ..src.main import app, socketio
+from ..src.models import Lobby
 
 
 class TestBackend(unittest.TestCase):
