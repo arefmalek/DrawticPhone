@@ -2,21 +2,21 @@ class User(object):
     def __init__(self, name: str):
         self.name = name
         self.prompt = ""
-        self.image_url = ""
+        self.imageUrl = ""
         self.guess = ""
 
-    def set_prompt(self, prompt: str):
+    def setPrompt(self, prompt: str):
         self.prompt = prompt
 
-    def set_image_url(self, image_url: str):
-        self.image_url = image_url
+    def setImageUrl(self, imageUrl: str):
+        self.imageUrl = imageUrl
 
-    def set_guess(self, guess: str):
+    def setGuess(self, guess: str):
         self.guess = guess
 
     def json(self):
         sol = dict()
         sol['prompt'] = self.prompt
-        sol['imageURL'] = self.image_url
+        sol['imageURL'] = self.imageUrl
         sol['guess'] = self.guess
         return sol
