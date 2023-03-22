@@ -45,8 +45,9 @@ def joinLobby(lobbyId: int, user_name: str):
     r.hmset('users:{}'.format(user_id), user_json) # add to users
 
     # add to users:lobbyId set
-    r.hmset('user-ids:{}'.format(lobbyId), user_id, user_name)
-    print(user_json)
+    # print('user-ids:{}'.format(lobbyId), user_id, user_name)
+    r.hset('user-ids:{}'.format(lobbyId), user_id, user_name)
+    # print(user_json)
 
     # add the name back for testing purposes
     emit('lobbyJoined', json.dumps(user_json), to=lobbyId)
@@ -54,21 +55,20 @@ def joinLobby(lobbyId: int, user_name: str):
 
 
 @socketio.on('leaveLobby')
-def leaveLobby(lobbyId: int, user_id: id):
+def leaveLobby(lobby_id: int, user_id: id):
     # delete user hashmap object at this id
-    userDict: dict = r.delete('users:{}'.format(user_id))
+    userDict: dict = r.hgetall('users:{}'.format(user_id))
+    user_obj_removal = r.delete('users:{}'.format(user_id))
+    userDict = {key.decode(): value.decode() for key, value in userDict.items()}
 
     # remove userid and username from userid hashmap
-    removal = r.hdel(f"user-ids:{lobbyId}", user_id)
+    removal = r.hdel(f"user-ids:{lobby_id}", user_id)
 
-    leaveDict = {}
-    leaveDict['removal_operation'] = removal
-    leaveDict['user_object'] = userDict
+    #TODO: delete the user object?
 
-    print(leaveDict)
 
-    emit('lobbyLeft', json.dumps(leaveDict))
-    join_room(lobbyid)
+    emit('lobbyLeft', json.dumps(userDict))
+    join_room(lobby_id)
     pass
 
 # game functions:

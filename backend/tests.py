@@ -76,26 +76,68 @@ class TestBackend(unittest.TestCase):
             self.testClient.emit("joinLobby", lobby_id, username)
 
         recieved = self.testClient.get_received()
-        print(recieved)
+        # print(recieved)
         
         # test that we've actually joined the lobby
 
         self.assertNotEqual(len(recieved), 0, msg='no message recieved')
         #   check what our response looks like
-        message = recieved[0]['args']
+        message = recieved[0]['args'][0]
+        # print(message)
 
         #   check that our userid set
         userDict: dict = json.loads(message)
         user_id = userDict['user_id']
 
         # check that it's in the user HM
-        userHM = self.r.hmget("users:{}".format(user_id))
+        userHM = self.r.hgetall("users:{}".format(user_id))
+        userHM = {key.decode(): value.decode() for key, value in userHM.items()}
+        # print(userHM)
         self.assertGreater(len(userHM), 0, msg="user_id not found in user HM!")
+
+        # check that the value of the id inside the user-ids group
+        user_id_name = self.r.hget("user-ids:{}".format(lobby_id), user_id).decode()
+        self.assertTrue(user_id_name == userDict['user_name'], "username ID in our list not same as username from function!")
         
 
         pass
 
     def testLeaveLobby(self):
+        # get lobby and user to join
+        lobby_id = self.r.get('nextLobbyId')
+        user_id = self.r.get('nextUserId')
+        if lobby_id is not None and user_id is not None:
+            lobby_id = int(lobby_id) - 1
+            user_id = int(user_id) - 1
+            # print("Lobby ID: ", lobby_id)
+            # join lobby with user
+            self.testClient.emit("leaveLobby", lobby_id, user_id)
+            # decrement the userId count for next time
+            self.r.decr('nextUserId')
+
+        recieved = self.testClient.get_received()
+        # print(recieved)
+        
+        # test that we've actually joined the lobby
+
+        self.assertNotEqual(len(recieved), 0, msg='no message recieved')
+        #   check what our response looks like
+        message = recieved[0]['args'][0]
+        # print(message)
+
+        #   check that our userid set
+        userDict: dict = json.loads(message)
+        user_id = userDict['user_id']
+
+        # check that it's in the user HM
+        userHM = self.r.hgetall("users:{}".format(user_id))
+        userHM = {key.decode(): value.decode() for key, value in userHM.items()} # get hmap value
+        self.assertEqual(len(userHM), 0, msg="user_id still found in the users key!")
+
+        # check that the value of the id inside the user-ids group
+        user_id_name = self.r.hget("user-ids:{}".format(lobby_id), user_id)
+        self.assertIsNone(user_id_name, "user_id not deleted from user-id list of game")
+        
         pass
 
     def testStartGame(self):
@@ -116,11 +158,12 @@ if __name__ == "__main__":
     tester.setUp()
 
     # create Lobby works I think
-    # tester.testCreateLobby()
-    # tester.testEnterLobby()
+    tester.testCreateLobby()
+    tester.testEnterLobby()
 
 
     tester.testJoinLobby()
+    tester.testLeaveLobby()
 
 
     tester.tearDown()

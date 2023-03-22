@@ -17,8 +17,8 @@ class User(object):
 
     def json(self):
         sol = dict()
-        sol["name"] = self.name
-        sol["id"] = self.id
+        sol["user_name"] = self.name
+        sol["user_id"] = self.id
         sol['prompt'] = self.prompt
         sol['imageURL'] = self.imageUrl
         sol['guess'] = self.guess
