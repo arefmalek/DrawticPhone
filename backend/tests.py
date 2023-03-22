@@ -63,6 +63,36 @@ class TestBackend(unittest.TestCase):
                          msg='lobby is not in waiting')
 
     def testJoinLobby(self):
+        # get parameters, test functionality
+
+
+        # get lobby and user to join
+        lobby_id = self.r.get('nextLobbyId')
+        username = "drawticPhoneGOAT"
+        if lobby_id is not None:
+            lobby_id = int(lobby_id) - 1
+            # print("Lobby ID: ", lobby_id)
+            # join lobby with user
+            self.testClient.emit("joinLobby", lobby_id, username)
+
+        recieved = self.testClient.get_received()
+        print(recieved)
+        
+        # test that we've actually joined the lobby
+
+        self.assertNotEqual(len(recieved), 0, msg='no message recieved')
+        #   check what our response looks like
+        message = recieved[0]['args']
+
+        #   check that our userid set
+        userDict: dict = json.loads(message)
+        user_id = userDict['user_id']
+
+        # check that it's in the user HM
+        userHM = self.r.hmget("users:{}".format(user_id))
+        self.assertGreater(len(userHM), 0, msg="user_id not found in user HM!")
+        
+
         pass
 
     def testLeaveLobby(self):
@@ -82,4 +112,16 @@ class TestBackend(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    tester = TestBackend()
+    tester.setUp()
+
+    # create Lobby works I think
+    # tester.testCreateLobby()
+    # tester.testEnterLobby()
+
+
+    tester.testJoinLobby()
+
+
+    tester.tearDown()
+    # unittest.main()

@@ -1,9 +1,10 @@
 class User(object):
-    def __init__(self, name: str):
+    def __init__(self, name: str, user_id: int = -1):
         self.name = name
         self.prompt = ""
         self.imageUrl = ""
         self.guess = ""
+        self.id = user_id
 
     def setPrompt(self, prompt: str):
         self.prompt = prompt
@@ -16,6 +17,8 @@ class User(object):
 
     def json(self):
         sol = dict()
+        sol["name"] = self.name
+        sol["id"] = self.id
         sol['prompt'] = self.prompt
         sol['imageURL'] = self.imageUrl
         sol['guess'] = self.guess
