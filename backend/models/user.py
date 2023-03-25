@@ -15,7 +15,7 @@ class User(object):
     def setGuess(self, guess: str):
         self.guess = guess
 
-    def json(self):
+    def mapping(self):
         sol = dict()
         sol["user_name"] = self.name
         sol["user_id"] = self.id

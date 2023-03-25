@@ -44,7 +44,7 @@ def joinLobby(lobbyId: int, user_name: str):
     user_id = r.incr('nextUserId') - 1
     user = User(name=user_name, user_id = user_id)
 
-    user_json = user.json()
+    user_json = user.mapping()
 
     # ignoring deprecation errors, for some reason this crashes 
     # when changing to r.hset()
