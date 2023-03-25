@@ -21,6 +21,9 @@ def createLobby():
     """
     lobbyid = r.incr('nextLobbyId') - 1
     lobby = Lobby(lobbyid)
+
+    # ignoring deprecation errors, for some reason this crashes 
+    # when changing to r.hset()
     r.hmset('lobby:{}'.format(lobbyid), lobby.mapping())
     emit('lobby', json.dumps(lobby.mapping()))
     join_room(lobbyid)
@@ -42,15 +45,18 @@ def joinLobby(lobbyId: int, user_name: str):
     user = User(name=user_name, user_id = user_id)
 
     user_json = user.json()
+
+    # ignoring deprecation errors, for some reason this crashes 
+    # when changing to r.hset()
     r.hmset('users:{}'.format(user_id), user_json) # add to users
 
     # add to users:lobbyId set
-    # print('user-ids:{}'.format(lobbyId), user_id, user_name)
-    r.hset('user-ids:{}'.format(lobbyId), user_id, user_name)
+    # print('user-id-table:{}'.format(lobbyId), user_id, user_name)
+    r.hset('user-id-table:{}'.format(lobbyId), user_id, user_name)
     # print(user_json)
 
     # add the name back for testing purposes
-    emit('lobbyJoined', json.dumps(user_json), to=lobbyId)
+    emit('lobbyJoined', json.dumps(user_json))
     pass
 
 
@@ -62,7 +68,7 @@ def leaveLobby(lobby_id: int, user_id: id):
     userDict = {key.decode(): value.decode() for key, value in userDict.items()}
 
     # remove userid and username from userid hashmap
-    removal = r.hdel(f"user-ids:{lobby_id}", user_id)
+    removal = r.hdel(f"user-id-table:{lobby_id}", user_id)
 
     #TODO: delete the user object?
 
