@@ -65,19 +65,16 @@ class TestBackend(unittest.TestCase):
     def testJoinLobby(self):
         # get parameters, test functionality
 
-
         # get lobby and user to join
         lobby_id = self.r.get('nextLobbyId')
         username = "drawticPhoneGOAT"
         if lobby_id is not None:
             lobby_id = int(lobby_id) - 1
-            # print("Lobby ID: ", lobby_id)
             # join lobby with user
             self.testClient.emit("joinLobby", lobby_id, username)
 
         recieved = self.testClient.get_received()
-        # print(recieved)
-        
+
         # test that we've actually joined the lobby
         self.assertNotEqual(len(recieved), 0, msg='no message recieved')
         #   check what our response looks like
@@ -89,13 +86,17 @@ class TestBackend(unittest.TestCase):
 
         # check that it's in the user HM
         userHM = self.r.hgetall("users:{}".format(user_id))
-        userHM = {key.decode(): value.decode() for key, value in userHM.items()}
+        userHM = {key.decode(): value.decode()
+                  for key, value in userHM.items()}
         self.assertGreater(len(userHM), 0, msg="user_id not found in user HM!")
 
         # check that the value of the id inside the user-ids group
-        user_id_name = self.r.hget("user-id-table:{}".format(lobby_id), user_id).decode()
-        self.assertTrue(user_id_name == userDict['user_name'], "username ID in our list not same as username from function!")
-        pass
+        user_id_name = self.r.hget(
+            "user-id-table:{}".format(lobby_id), user_id)
+        if user_id_name != None:
+            user_id_name = user_id_name.decode()
+        self.assertTrue(user_id_name == userDict['user_name'],
+                        "username ID in our list not same as username from function!")
 
     def testLeaveLobby(self):
         # get lobby and user to join
@@ -104,14 +105,13 @@ class TestBackend(unittest.TestCase):
         if lobby_id is not None and user_id is not None:
             lobby_id = int(lobby_id) - 1
             user_id = int(user_id) - 1
-            # print("Lobby ID: ", lobby_id)
             # join lobby with user
             self.testClient.emit("leaveLobby", lobby_id, user_id)
             # decrement the userId count for next time
             self.r.decr('nextUserId')
 
         recieved = self.testClient.get_received()
-        
+
         # test that we've actually joined the lobby
 
         self.assertNotEqual(len(recieved), 0, msg='no message recieved')
@@ -124,14 +124,16 @@ class TestBackend(unittest.TestCase):
 
         # check that it's in the user HM
         userHM = self.r.hgetall("users:{}".format(user_id))
-        userHM = {key.decode(): value.decode() for key, value in userHM.items()} # get hmap value
-        self.assertEqual(len(userHM), 0, msg="user_id still found in the users key!")
+        userHM = {key.decode(): value.decode()
+                  for key, value in userHM.items()}  # get hmap value
+        self.assertEqual(
+            len(userHM), 0, msg="user_id still found in the users key!")
 
         # check that the value of the id inside the user-ids group
-        user_id_name = self.r.hget("user-id-table:{}".format(lobby_id), user_id)
-        self.assertIsNone(user_id_name, "user_id not deleted from user-id list of game")
-        
-        pass
+        user_id_name = self.r.hget(
+            "user-id-table:{}".format(lobby_id), user_id)
+        self.assertIsNone(
+            user_id_name, "user_id not deleted from user-id list of game")
 
     def testStartGame(self):
         pass
@@ -147,17 +149,4 @@ class TestBackend(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # tester = TestBackend()
-    # tester.setUp()
-
-    # create Lobby works I think
-    # tester.testCreateLobby()
-    # tester.testEnterLobby()
-
-
-    # tester.testJoinLobby()
-    # tester.testLeaveLobby()
-
-
-    # tester.tearDown()
     unittest.main()
