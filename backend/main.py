@@ -5,7 +5,6 @@ import redis
 from models.lobby import Lobby
 from models.user import User
 import json
-from db import generateLobbyId, storeLobby, loadLobby
 
 app = Flask(__name__)
 cors = CORS(app)
